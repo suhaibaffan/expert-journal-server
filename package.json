@@ -1,0 +1,42 @@
+{
+  "name": "expert-journal-server",
+  "version": "1.0.0",
+  "description": "A simple nodejs based API server for managing tasks for authenticated user.",
+  "main": "app.js",
+  "repository": "https://github.com/suhaibaffan/expert-journal-server.git",
+  "author": "Suhaib Affan",
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn -s env && node --unhandled-rejections=strict -r dotenv/config -r source-map-support/register -r @babel/register src/app.js",
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix ."
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "dotenv": "^8.2.0",
+    "fs-extra": "^9.0.1",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^10.0.0",
+    "mongoose": "^5.11.10"
+  },
+  "devDependencies": {
+    "@ava/babel": "^1.0.1",
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-decorators": "^7.12.12",
+    "@babel/plugin-proposal-function-bind": "^7.12.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.7",
+    "@babel/plugin-syntax-bigint": "^7.8.3",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/register": "^7.12.10",
+    "ava": "^3.15.0",
+    "babel-eslint": "^10.1.0",
+    "babel-plugin-inline-import": "^3.0.0",
+    "eslint": "^7.17.0",
+    "sinon": "^9.2.3"
+  }
+}
