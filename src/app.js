@@ -3,8 +3,9 @@ import parser from 'koa-bodyparser';
 import KoaRouter from 'koa-router';
 import logger from 'koa-logger';
 import chalk from 'chalk';
-import { PORT } from './env';
 import './db/init';
+import { PORT } from './env';
+import { authenticateUser } from './routes/user';
 
 main();
 
@@ -26,6 +27,8 @@ async function startServer () {
     });
 
     // public apis
+
+    router.post( '/user/login', authenticateUser );
 
     // private apis
 

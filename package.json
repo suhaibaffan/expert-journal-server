@@ -7,7 +7,7 @@
   "author": "Suhaib Affan",
   "license": "MIT",
   "scripts": {
-    "start": "yarn -s env && node --unhandled-rejections=strict -r dotenv/config -r source-map-support/register -r @babel/register src/app.js",
+    "start": "yarn -s env && node -r dotenv/config -r @babel/register src/app.js",
     "lint": "eslint .",
     "lint-fix": "eslint --fix ."
   },
@@ -15,6 +15,7 @@
     "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
     "fs-extra": "^9.0.1",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
     "koa-logger": "^3.2.1",
