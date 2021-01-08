@@ -67,15 +67,15 @@ export async function updateTask ( ctx ) {
     const { name, completed } = ctx.request.body;
     const { id } = ctx.params;
 
-    const task = await Task.findByIdAndUpdate( id, {
-        ...( name ? { name } : {} ),
-        ...( completed === false || completed === true ? { completed } : {} )
-    }, { new: true });
-
-    if ( !task )
-        throw new Error( 'Task id not found' );
-
-
-    ctx.status = 200;
-    ctx.body = { task };
+    try {
+        const task = await Task.findByIdAndUpdate( id, {
+            ...( name ? { name } : {} ),
+            ...( completed === false || completed === true ? { completed } : {} )
+        }, { new: true });
+        ctx.status = 200;
+        ctx.body = { task };
+    } catch ( err ) {
+        ctx.status = 400;
+        ctx.body = 'Task not found!';
+    }
 }
