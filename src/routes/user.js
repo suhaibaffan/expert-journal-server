@@ -21,7 +21,7 @@ export async function authenticateUser ( ctx ) {
     if ( user ) {
         const token = await generateJWT({ id, name, profile: user.profile }, { expiresIn: '1d' });
         ctx.type = 'application/json';
-        ctx.body = JSON.stringify( token );
+        ctx.body = { token: JSON.stringify( token ), name, profile };
     }
 }
 
@@ -90,5 +90,26 @@ export async function deleteTask ( ctx ) {
     } catch ( err ) {
         ctx.status = 404;
         ctx.body = 'Task not found!';
+    }
+}
+
+export async function dashboard ( ctx ) {
+    const bearerToken = getBearerToken( ctx );
+    const { token } = await verifyJWT( bearerToken );
+    const user = await User.findOne({ id: token.id });
+
+    if ( !user )
+        throw new Error( 'User may have deleted his account!' );
+
+    const tasks = await Task.find({ user: user._id }).lean();
+    const tasksCompleted = tasks.filter( task => task.completed ).length;
+    const totalTasks = tasks.length;
+    const latestTasks = await Task.find({ created_at: { $gt: new Date().getTime() - ( 5 * 60 * 1000 ) } });
+
+    ctx.status = 200;
+    ctx.body = {
+        tasksCompleted,
+        totalTasks,
+        latestTasks
     }
 }
