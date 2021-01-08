@@ -5,7 +5,7 @@ import logger from 'koa-logger';
 import chalk from 'chalk';
 import './db/init';
 import { PORT } from './env';
-import { authenticateUser, createTask, getAllTasks, updateTask } from './routes/user';
+import { authenticateUser, createTask, deleteTask, getAllTasks, updateTask } from './routes/user';
 import { verifyJWT, getBearerToken } from './jwt';
 
 main();
@@ -38,11 +38,11 @@ async function startServer () {
 
     router.get( '/user/tasks', checkAuthToken, getAllTasks );
 
-    router.post( '/user/tasks', checkAuthToken, createTask )
+    router.post( '/user/tasks', checkAuthToken, createTask );
 
-    router.put( '/user/tasks/:id', checkAuthToken, updateTask )
+    router.put( '/user/tasks/:id', checkAuthToken, updateTask );
 
-    router.delete( '/user/tasks/:id', checkAuthToken )
+    router.delete( '/user/tasks/:id', checkAuthToken, deleteTask );
 
     app.use( router.routes() );
     app.use( router.allowedMethods() );

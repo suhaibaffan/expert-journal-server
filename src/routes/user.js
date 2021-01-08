@@ -75,7 +75,20 @@ export async function updateTask ( ctx ) {
         ctx.status = 200;
         ctx.body = { task };
     } catch ( err ) {
-        ctx.status = 400;
+        ctx.status = 404;
+        ctx.body = 'Task not found!';
+    }
+}
+
+export async function deleteTask ( ctx ) {
+    const { id } = ctx.params;
+
+    try{
+        await Task.findByIdAndDelete( id );
+        ctx.status = 200;
+        ctx.body = 'Task deleted.'
+    } catch ( err ) {
+        ctx.status = 404;
         ctx.body = 'Task not found!';
     }
 }
