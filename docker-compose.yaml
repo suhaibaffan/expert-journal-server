@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+    nodejs:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: journal-server
+        container_name: journal-server
+        restart: unless-stopped
+        ports:
+            - "8000:8000"
+        volumes:
+            - /app
+        command: yarn start
