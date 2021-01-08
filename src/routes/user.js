@@ -21,7 +21,7 @@ export async function authenticateUser ( ctx ) {
     if ( user ) {
         const token = await generateJWT({ id, name, profile: user.profile }, { expiresIn: '1d' });
         ctx.type = 'application/json';
-        ctx.body = { token: JSON.stringify( token ), name, profile: user.profile };
+        ctx.body = { token, name, profile: user.profile };
     }
 }
 
