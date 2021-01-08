@@ -23,3 +23,11 @@ export async function verifyJWT ( token ) {
         return { ok: false, status: 403 };
     }
 }
+
+export function getBearerToken ( ctx ) {
+    const bearerToken = ctx.get( 'authorization' );
+    if ( !bearerToken || !bearerToken.startsWith( 'Bearer ' ) ) {
+        return null;
+    }
+    return bearerToken.slice( 'Bearer '.length );
+}

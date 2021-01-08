@@ -5,8 +5,8 @@ import logger from 'koa-logger';
 import chalk from 'chalk';
 import './db/init';
 import { PORT } from './env';
-import { authenticateUser } from './routes/user';
-import { verifyJWT } from './jwt';
+import { authenticateUser, createTask, getAllTasks, updateTask } from './routes/user';
+import { verifyJWT, getBearerToken } from './jwt';
 
 main();
 
@@ -36,11 +36,11 @@ async function startServer () {
         ctx.body = "done"
     });
 
-    router.get( '/user/tasks', checkAuthToken );
+    router.get( '/user/tasks', checkAuthToken, getAllTasks );
 
-    router.post( '/user/tasks', checkAuthToken )
+    router.post( '/user/tasks', checkAuthToken, createTask )
 
-    router.put( '/user/tasks/:id', checkAuthToken )
+    router.put( '/user/tasks/:id', checkAuthToken, updateTask )
 
     router.delete( '/user/tasks/:id', checkAuthToken )
 
@@ -86,12 +86,4 @@ async function checkAuthToken ( ctx, next ) {
     ctx.authorization = { token };
 
     return next();
-}
-
-function getBearerToken ( ctx ) {
-    const bearerToken = ctx.get( 'authorization' );
-    if ( !bearerToken || !bearerToken.startsWith( 'Bearer ' ) ) {
-        return null;
-    }
-    return bearerToken.slice( 'Bearer '.length );
 }

@@ -1,5 +1,6 @@
-import { generateJWT } from '../jwt';
+import { generateJWT, verifyJWT, getBearerToken } from '../jwt';
 import { User } from '../db/User.model';
+import { Task } from '../db/Task.model';
 
 export async function authenticateUser ( ctx ) {
     const { id, name } = ctx.request.body;
@@ -22,4 +23,59 @@ export async function authenticateUser ( ctx ) {
         ctx.type = 'application/json';
         ctx.body = JSON.stringify( token );
     }
+}
+
+export async function createTask ( ctx ) {
+    const { name } = ctx.request.body;
+
+    if ( !name )
+        throw new Error( 'Name required for a new task' );
+    
+    const bearerToken = getBearerToken( ctx );
+    const { token } = await verifyJWT( bearerToken );
+    const user = await User.findOne({ id: token.id });
+
+    if ( !user )
+        throw new Error( 'User may have deleted his account!' );
+
+    const task = new Task({
+        name,
+        user: user._id,
+        completed: false
+    });
+
+    await task.save();
+
+    ctx.status = 201;
+}
+
+export async function getAllTasks ( ctx ) {
+    const bearerToken = getBearerToken( ctx );
+    const { token } = await verifyJWT( bearerToken );
+    const user = await User.findOne({ id: token.id });
+
+    if ( !user )
+        throw new Error( 'User may have deleted his account!' );
+
+    const tasks = await Task.find({ user: user._id }).lean();
+
+    ctx.status = 200;
+    ctx.body = { tasks };
+}
+
+export async function updateTask ( ctx ) {
+    const { name, completed } = ctx.request.body;
+    const { id } = ctx.params;
+
+    const task = await Task.findByIdAndUpdate( id, {
+        ...( name ? { name } : {} ),
+        ...( completed === false || completed === true ? { completed } : {} )
+    }, { new: true });
+
+    if ( !task )
+        throw new Error( 'Task id not found' );
+
+
+    ctx.status = 200;
+    ctx.body = { task };
 }
