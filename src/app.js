@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import './db/init';
 import { PORT } from './env';
 import { authenticateUser } from './routes/user';
+import { verifyJWT } from './jwt';
 
 main();
 
@@ -22,15 +23,26 @@ async function startServer () {
 
     const router = new KoaRouter();
 
+    // public apis
     router.get( '/health', ( ctx ) => {
         ctx.body = 'Server is up.'
     });
 
-    // public apis
-
     router.post( '/user/login', authenticateUser );
 
     // private apis
+
+    router.get( '/user/dashboard', checkAuthToken, ( ctx ) => {
+        ctx.body = "done"
+    });
+
+    router.get( '/user/tasks', checkAuthToken );
+
+    router.post( '/user/tasks', checkAuthToken )
+
+    router.put( '/user/tasks/:id', checkAuthToken )
+
+    router.delete( '/user/tasks/:id', checkAuthToken )
 
     app.use( router.routes() );
     app.use( router.allowedMethods() );
@@ -52,4 +64,34 @@ function errorHandlerMiddleware () {
             ctx.body = err.message || err.toString();
         }
     };
+}
+
+async function checkAuthToken ( ctx, next ) {
+    const token = getBearerToken( ctx );
+    if ( !token ) {
+        ctx.status = 401;
+        ctx.body = 'Missing authentication.';
+        console.warn({ req: ctx.req }, 'Unauthenticated request - missing bearer token' );
+        return undefined;
+    }
+
+    const { ok: authorized } = await verifyJWT( token );
+
+    if ( !authorized ) {
+        ctx.status = 403;
+        ctx.body = 'Unauthorized';
+        return undefined;
+    }
+
+    ctx.authorization = { token };
+
+    return next();
+}
+
+function getBearerToken ( ctx ) {
+    const bearerToken = ctx.get( 'authorization' );
+    if ( !bearerToken || !bearerToken.startsWith( 'Bearer ' ) ) {
+        return null;
+    }
+    return bearerToken.slice( 'Bearer '.length );
 }
