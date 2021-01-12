@@ -104,7 +104,7 @@ export async function dashboard ( ctx ) {
     const tasks = await Task.find({ user: user._id }).lean();
     const tasksCompleted = tasks.filter( task => task.completed ).length;
     const totalTasks = tasks.length;
-    const latestTasks = await Task.find({ created_at: { $gt: new Date().getTime() - ( 5 * 60 * 1000 ) } });
+    const latestTasks = await Task.find({ created_at: { $gt: new Date().getTime() - ( 30 * 60 * 1000 ) } });
 
     ctx.status = 200;
     ctx.body = {
