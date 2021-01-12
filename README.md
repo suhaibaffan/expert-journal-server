@@ -1,6 +1,8 @@
 ### expert-journal-server
 A simple nodejs based API server for managing tasks for authenticated user.
 
+#### Test deployed server URL: https://glacial-island-05878.herokuapp.com/health
+
 ## How to install?
 - Clone the repo
 - install the dependencies `yarn`
